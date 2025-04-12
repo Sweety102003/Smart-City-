@@ -9,12 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-three/drei": "^10.0.6",
+    "@react-three/fiber": "^9.1.2",
+    "axios": "^1.8.4",
+    "bcrypt": "^5.1.1",
+    "express": "^5.1.0",
     "lucide-react": "^0.487.0",
     "mongoose": "^8.13.2",
     "next": "15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "three": "^0.175.0"
+    "three": "^0.175.0",
+    "ws": "^8.18.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

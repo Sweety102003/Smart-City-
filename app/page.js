@@ -25,8 +25,8 @@ export default function Home() {
     directionalLight.position.set(10, 20, 10);
     scene.add(directionalLight);
 
-    const gridHelper = new THREE.GridHelper(100, 50);
-    scene.add(gridHelper);
+    // const gridHelper = new THREE.GridHelper(100, 50);
+    // scene.add(gridHelper);
 
     const buildings = [];
     for (let i = 0; i < 50; i++) {
