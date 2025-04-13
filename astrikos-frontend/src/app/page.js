@@ -16,20 +16,7 @@ export default function Home() {
       {/* Google Map as base layer */}
       <MapOverlay onAirData={setAirData} />
 
-      {/* Chart panel overlay */}
-      <div style={{
-        position: "absolute",
-        top: "20px",
-        left: "20px",
-        backgroundColor: "#fff",
-        padding: "10px",
-        borderRadius: "10px",
-        zIndex: 10,
-        width: "500px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.4)"
-      }}>
-        <ChartPanel airData={airData} />
-      </div>
+      
     </div>
   );
 }
