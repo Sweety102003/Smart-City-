@@ -4,11 +4,38 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-
+import axios from "axios"
 export default function Signin() {
+  const [email,setemail]=useState("");
+  const [password , setpassword]=useState("");
+
   const [showPassword, setShowPassword] = useState(false);
   const containerRef = useRef(null);
+const postdata=async()=>{
+  try{
+  const response= await axios.post("/api/signin",
+    {
+      email ,
+      password
+    },{
+      headers:{
+        "Content-Type":"application/json"
+      }
+    }
+  );
 
+  localStorage.setItem("token", response.data.token);
+
+}
+
+  
+
+  catch(error)
+  {
+    console.log(error);
+  }
+
+}
   useEffect(() => {
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0xcccccc, 10, 100);
@@ -160,6 +187,10 @@ export default function Signin() {
             <input
               type="email"
               placeholder="Enter your email"
+              value={email}
+              onChange={(e)=>{
+                setemail(e.target.value);
+              }}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none"
             />
           </div>
@@ -169,6 +200,10 @@ export default function Signin() {
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter your password"
+              value={password}
+              onChange={(e)=>{
+                setpassword(e.target.value);
+              }}
               className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none"
             />
             {showPassword ? (
@@ -193,7 +228,7 @@ export default function Signin() {
             </Link>
           </div>
 
-          <button className="w-full bg-[#1d1d4f] text-white py-2 rounded-md font-semibold mb-4">
+          <button onClick={postdata} className="w-full bg-[#1d1d4f] text-white py-2 rounded-md font-semibold mb-4">
             Sign In
           </button>
 
