@@ -238,16 +238,54 @@ export default function ViewerPage() {
     );
   };
 
+  // const handleSaveGrouped = () => {
+  //   const token = localStorage.getItem('token');
+  //   if (!token) return alert('User not authenticated');
+
+  //   const group = new THREE.Group();
+  //   modelsRef.current.forEach((model) => {
+  //     group.add(model.mesh.clone());
+  //   });
+  //   exportGLB(group, `grouped_scene_${Date.now()}.glb`);
+  // };
   const handleSaveGrouped = () => {
     const token = localStorage.getItem('token');
     if (!token) return alert('User not authenticated');
-
+  
     const group = new THREE.Group();
     modelsRef.current.forEach((model) => {
       group.add(model.mesh.clone());
     });
-    exportGLB(group, `grouped_scene_${Date.now()}.glb`);
+  
+    const exporter = new GLTFExporter();
+    exporter.parse(
+      group,
+      (result) => {
+        const blob = new Blob([result], { type: 'model/gltf-binary' });
+        const formData = new FormData();
+        formData.append('file', blob, `grouped_scene_${Date.now()}.glb`);
+  
+        fetch('/api/upload-grouped', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log('Uploaded grouped model:', data);
+            alert('Grouped model saved to MongoDB!');
+          })
+          .catch((err) => {
+            console.error('Upload error:', err);
+            alert('Error uploading grouped model');
+          });
+      },
+      { binary: true }
+    );
   };
+  
 
   return (
     <div style={{ width: '100vw', height: '80vh', display: 'flex', flexDirection: 'column' }}>

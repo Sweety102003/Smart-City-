@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 export default function Home() {
   const containerRef = useRef(null);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
-
+  const rendererRef = useRef(null);
   useEffect(() => {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
@@ -17,7 +17,12 @@ export default function Home() {
     );
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
-    containerRef.current.appendChild(renderer.domElement);
+    // containerRef.current.appendChild(renderer.domElement);
+    if (containerRef.current && !rendererRef.current) {
+      containerRef.current.innerHTML = ''; // Clear previous renderer if any
+      containerRef.current.appendChild(renderer.domElement);
+      rendererRef.current = renderer;
+    }
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
@@ -92,6 +97,7 @@ export default function Home() {
     return () => {
       window.removeEventListener("click", handleMouseClick);
       window.removeEventListener("resize", handleResize);
+      
       renderer.dispose();
     };
   }, []);
