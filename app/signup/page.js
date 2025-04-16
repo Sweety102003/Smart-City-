@@ -138,9 +138,9 @@ export default function Signup() {
 
           <p className="text-sm text-center mt-4">
             Already have an account?{" "}
-            <a href="/signin" className="text-blue-600 underline">
+            <span onClick={()=>router.push("/signin")} className="text-blue-600 underline">
               Sign In
-            </a>
+            </span>
           </p>
         </div>
       </div>

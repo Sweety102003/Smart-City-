@@ -2,11 +2,13 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const containerRef = useRef(null);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const rendererRef = useRef(null);
+  const router =useRouter();
   useEffect(() => {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
@@ -114,7 +116,7 @@ export default function Home() {
           <a href="#about" className="hover:text-purple-400">About</a>
         </nav>
         <div className="space-x-4">
-          <button className="border px-4 py-2 rounded border-gray-600 hover:border-white">Login</button>
+          <button onClick={()=>router.push("/signin")} className="border px-4 py-2 rounded border-gray-600 hover:border-white">Login</button>
           <button className="bg-purple-500 px-4 py-2 rounded hover:bg-purple-600">Get Started</button>
         </div>
       </header>

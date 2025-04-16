@@ -302,9 +302,9 @@ const postdata=async()=>{
 
           <p className="text-sm text-center">
             Don&apos;t have an account?{' '}
-            <Link href="#" className="text-[#1d1d4f] font-semibold hover:underline">
+            <span  onClick={()=>router.push("/signup")} className="text-[#1d1d4f] font-semibold hover:underline">
               Create Account
-            </Link>
+            </span>
           </p>
         </div>
       </div>
