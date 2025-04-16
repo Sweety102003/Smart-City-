@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { flightRouterStateSchema } from "next/dist/server/app-render/types";
 
 export default function Home() {
   const containerRef = useRef(null);
@@ -36,7 +37,7 @@ export default function Home() {
     // scene.add(gridHelper);
 
     const buildings = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 45; i++) {
       const height = Math.random() * 8 + 2;
       const geometry = new THREE.BoxGeometry(2, height, 2);
       const material = new THREE.MeshStandardMaterial({ color: 0x800080 }); // Purple color
@@ -52,7 +53,28 @@ export default function Home() {
       scene.add(building);
       buildings.push(building);
     }
+    const spheres = [];
+    for (let i = 0; i < 16; i++) {
+      const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(1, 32, 32),
+        new THREE.MeshStandardMaterial({ color: 0x00ffff })
+      );
+      sphere.position.set(Math.random() * 40 - 20, Math.random() * 5 + 5, Math.random() * 40 - 20);
+      sphere.userData = { floatSpeed: Math.random() * 0.02 + 0.01, originalY: sphere.position.y };
+      scene.add(sphere);
+      spheres.push(sphere);
+    }
 
+    const cylinders = [];
+    for (let i = 0; i < 10; i++) {
+      const cyl = new THREE.Mesh(
+        new THREE.CylinderGeometry(1, 1, 5, 32),
+        new THREE.MeshStandardMaterial({ color: 0xffa500 })
+      );
+      cyl.position.set(Math.random() * 40 - 20, 2.5, Math.random() * 40 - 20);
+      scene.add(cyl);
+      cylinders.push(cyl);
+    }
     camera.position.set(20, 25, 20);
     camera.lookAt(scene.position);
 
@@ -89,13 +111,32 @@ export default function Home() {
     window.addEventListener("click", handleMouseClick);
     window.addEventListener("resize", handleResize);
 
+    // const animate = () => {
+    //   requestAnimationFrame(animate);
+    //   controls.update();
+    //   renderer.render(scene, camera);
+    // };
+    // animate();
+    const clock = new THREE.Clock();
+
     const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
+
+      // Animate spheres up and down
+      const time = clock.getElapsedTime();
+      spheres.forEach((s, i) => {
+        s.position.y = s.userData.originalY + Math.sin(time * s.userData.floatSpeed * 5 + i) * 0.5;
+      });
+
+      // Rotate cylinders
+      cylinders.forEach((cyl) => {
+        cyl.rotation.y += 0.01;
+      });
+
       renderer.render(scene, camera);
     };
     animate();
-
     return () => {
       window.removeEventListener("click", handleMouseClick);
       window.removeEventListener("resize", handleResize);
@@ -140,22 +181,18 @@ export default function Home() {
       {/* Features Section */}
       <section id="features" className="bg-gray-900 py-20 px-8">
         <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           <div className="bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg">
             <h3 className="text-xl font-semibold mb-4">Live City Insights</h3>
             <p className="text-gray-400">Monitor your city's pulse in real-time with our advanced data feeds.</p>
-            <a href="#" className="text-purple-400 mt-4 inline-block hover:underline">Learn More</a>
+            <span onClick={()=>router.push("/maps")} className="text-purple-400 mt-4 inline-block hover:underline">Let's Explore</span>
           </div>
           <div className="bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg">
             <h3 className="text-xl font-semibold mb-4">Interactive 3D Visualization</h3>
-            <p className="text-gray-400">Explore dynamic cityscapes with detailed, interactive 3D maps.</p>
-            <a href="#" className="text-purple-400 mt-4 inline-block hover:underline">Learn More</a>
+            <p className="text-gray-400">Explore dynamic cityscapes with detailed, interactive models.</p>
+            <span onClick={()=>router.push("/viewer")} className="text-purple-400 mt-4 inline-block hover:underline">Let's Explore </span>
           </div>
-          <div className="bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg">
-            <h3 className="text-xl font-semibold mb-4">Intelligent Analytics</h3>
-            <p className="text-gray-400">Gain actionable insights using our predictive analytics engine.</p>
-            <a href="#" className="text-purple-400 mt-4 inline-block hover:underline">Learn More</a>
-          </div>
+          
         </div>
       </section>
 
