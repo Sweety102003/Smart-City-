@@ -7,6 +7,7 @@ export default function ChatBox({ chat }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loggedInUserId, setLoggedInUserId] = useState('');
+  const [groupUsers, setGroupUsers] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -23,6 +24,15 @@ export default function ChatBox({ chat }) {
 
         const decoded = JSON.parse(atob(token.split('.')[1]));
         setLoggedInUserId(decoded.userId);
+
+        if (chat.isGroupChat) {
+          // Remove duplicate users by userId (ensure uniqueness)
+          const uniqueUsers = chat.users.filter(
+            (value, index, self) => self.findIndex((u) => u._id === value._id) === index
+          );
+          // Populate group users (excluding the current logged-in user)
+          setGroupUsers(uniqueUsers.filter(user => user._id !== decoded.userId));
+        }
       } catch (err) {
         console.error('Error fetching messages:', err);
       }
@@ -69,9 +79,30 @@ export default function ChatBox({ chat }) {
     <div className="flex-1 flex flex-col h-full border-l border-gray-300">
       {/* Header */}
       <div className="px-4 py-2 border-b bg-white shadow-sm font-semibold text-lg">
-        {chat.isGroupChat
-          ? chat.chatName
-          : chat.users.find((u) => u._id !== loggedInUserId)?.name}
+        {chat.isGroupChat ? (
+          <>
+            {/* Display group chat name */}
+            <div>{chat.chatName}</div>
+            {/* Display users in the group chat */}
+            <div className="text-sm text-gray-600">
+              <strong>Participants:</strong>
+              {groupUsers.length > 0 ? (
+                <div className="flex flex-wrap space-x-2">
+                  {groupUsers.map(user => (
+                    <span key={user._id} className="text-blue-600">
+                      {user.name}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <span>No other participants</span>
+              )}
+            </div>
+          </>
+        ) : (
+          // If it's a direct message chat
+          chat.users.find((u) => u._id !== loggedInUserId)?.name
+        )}
       </div>
 
       {/* Messages */}

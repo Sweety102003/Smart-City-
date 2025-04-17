@@ -3,12 +3,14 @@ import connectdb from '../../lib/connect';
 import Chat from '../../models/chat';
 import User from '../../models/user';
 import jwt from 'jsonwebtoken';
+import Message from '../../models/message'; // 👈 IMPORTANT
 
 const getUserFromToken = async (req) => {
   const authHeader = req.headers.get('authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
 
   const token = authHeader.split(' ')[1];
+  console.log(token);
   try {
     const decoded = jwt.verify(token, process.env.jwt_secret);
     // return decoded.id
