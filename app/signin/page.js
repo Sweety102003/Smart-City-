@@ -7,39 +7,32 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import axios from "axios"
 import { useRouter } from 'next/navigation';
 export default function Signin() {
-  const [email,setemail]=useState("");
-  const [password , setpassword]=useState("");
-const router=useRouter();
+  const [email, setemail] = useState("");
+  const [password, setpassword] = useState("");
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const containerRef = useRef(null);
   const rendererRef = useRef(null);
-const postdata=async()=>{
-  try{
-  const response= await axios.post("/api/signin",
-    {
-      email ,
-      password
-    },{
-      headers:{
-        "Content-Type":"application/json"
+  const postdata = async () => {
+    try {
+      const response = await axios.post("/api/signin",
+        {
+          email,
+          password
+        }, {
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
+      );
+
+      localStorage.setItem("token", response.data.token);
+      router.push("/");
+    } catch (error) {
+      console.log(error);
     }
-  );
 
-  localStorage.setItem("token", response.data.token);
-  router.push("/");
-
-
-}
-
-  
-
-  catch(error)
-  {
-    console.log(error);
   }
-
-}
   useEffect(() => {
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0xcccccc, 10, 100);
@@ -95,7 +88,8 @@ const postdata=async()=>{
       const height = Math.random() * 15 + 5;
       const geometry = new THREE.BoxGeometry(2, height, 2);
       const material = new THREE.MeshStandardMaterial({
-        color: 0xD0ACCF      });
+        color: 0xD0ACCF
+      });
       const building = new THREE.Mesh(geometry, material);
       building.castShadow = true;
       building.receiveShadow = true;
@@ -164,7 +158,7 @@ const postdata=async()=>{
     animate();
 
     // return () => {
-     
+
     //   if (rendererRef.current) {
     //     rendererRef.current.dispose();
     //     if (containerRef.current.contains(rendererRef.current.domElement)) {
@@ -187,23 +181,23 @@ const postdata=async()=>{
         containerRef.current.appendChild(renderer.domElement);
         rendererRef.current = renderer;
       }
-      
+
     };
-    
-      // // if (containerRef.current.childNodes.length > 0) {
-      //   // containerRef.current.removeChild(containerRef.current.firstChild);
-      // // } renderer.dispose();
-      // if (containerRef.current 
-      //   // && renderer.domElement.parentNode === containerRef.current
+
+    // // if (containerRef.current.childNodes.length > 0) {
+    //   // containerRef.current.removeChild(containerRef.current.firstChild);
+    // // } renderer.dispose();
+    // if (containerRef.current 
+    //   // && renderer.domElement.parentNode === containerRef.current
 
 
 
 
-      // ) {
-      //   containerRef.current.removeChild(renderer.domElement);
-      // }
-      // containerRef.current.removeChild(renderer.domElement);
-    
+    // ) {
+    //   containerRef.current.removeChild(renderer.domElement);
+    // }
+    // containerRef.current.removeChild(renderer.domElement);
+
   }, []);
 
   return (
@@ -226,7 +220,7 @@ const postdata=async()=>{
       <div className="w-1/2 flex flex-col justify-center items-center px-10">
         <div className="max-w-md w-full">
           <h2 className="text-2xl font-bold mb-2 text-[#1d1d4f]">Welcome Back</h2>
-          <p className="text-gray-500 mb-6">Sign in to your dashboard</p>
+          <p className="text-gray-500 mb-6">Sign in to your Dashboard</p>
 
           <div className="relative mb-4">
             <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -234,7 +228,7 @@ const postdata=async()=>{
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e)=>{
+              onChange={(e) => {
                 setemail(e.target.value);
               }}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none"
@@ -247,7 +241,7 @@ const postdata=async()=>{
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter your password"
               value={password}
-              onChange={(e)=>{
+              onChange={(e) => {
                 setpassword(e.target.value);
               }}
               className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none"
@@ -269,12 +263,12 @@ const postdata=async()=>{
             <label className="flex items-center gap-2">
               <input type="checkbox" className="form-checkbox" /> Remember me
             </label>
-            <Link href="#" className="text-[#1d1d4f] font-semibold hover:underline">
+            <Link href="#" className="text-[#1d1d4f] font-semibold hover:underline hover:cursor-pointer hover:text-purple-500">
               Forgot Password?
             </Link>
           </div>
 
-          <button onClick={postdata} className="w-full bg-[#1d1d4f] text-white py-2 rounded-md font-semibold mb-4">
+          <button onClick={postdata} className="w-full bg-[#1d1d4f] text-white py-2 rounded-md font-semibold mb-4 hover:cursor-pointer hover:bg-purple-500 ">
             Sign In
           </button>
 
@@ -286,13 +280,13 @@ const postdata=async()=>{
 
           <div className="flex gap-4 mb-6">
             <button className="flex-1 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-md">
-            
+
               <svg className="w-5 h-5 mr-2" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg">
-              <path d="M533.5 278.4c0-18.5-1.5-37.1-4.7-55.3H272.1v104.8h147c-6.1 33.8-25.7 63.7-54.4 82.7v68h87.7c51.5-47.4 81.1-117.4 81.1-200.2z" fill="#4285f4" />
-              <path d="M272.1 544.3c73.4 0 135.3-24.1 180.4-65.7l-87.7-68c-24.4 16.6-55.9 26-92.6 26-71 0-131.2-47.9-152.8-112.3H28.9v70.1c46.2 91.9 140.3 149.9 243.2 149.9z" fill="#34a853" />
-              <path d="M119.3 324.3c-11.4-33.8-11.4-70.4 0-104.2V150H28.9c-38.6 76.9-38.6 167.5 0 244.4l90.4-70.1z" fill="#fbbc04" />
-              <path d="M272.1 107.7c38.8-.6 76.3 14 104.4 40.8l77.7-77.7C405 24.6 339.7-.8 272.1 0 169.2 0 75.1 58 28.9 150l90.4 70.1c21.5-64.5 81.8-112.4 152.8-112.4z" fill="#ea4335" />
-            </svg>
+                <path d="M533.5 278.4c0-18.5-1.5-37.1-4.7-55.3H272.1v104.8h147c-6.1 33.8-25.7 63.7-54.4 82.7v68h87.7c51.5-47.4 81.1-117.4 81.1-200.2z" fill="#4285f4" />
+                <path d="M272.1 544.3c73.4 0 135.3-24.1 180.4-65.7l-87.7-68c-24.4 16.6-55.9 26-92.6 26-71 0-131.2-47.9-152.8-112.3H28.9v70.1c46.2 91.9 140.3 149.9 243.2 149.9z" fill="#34a853" />
+                <path d="M119.3 324.3c-11.4-33.8-11.4-70.4 0-104.2V150H28.9c-38.6 76.9-38.6 167.5 0 244.4l90.4-70.1z" fill="#fbbc04" />
+                <path d="M272.1 107.7c38.8-.6 76.3 14 104.4 40.8l77.7-77.7C405 24.6 339.7-.8 272.1 0 169.2 0 75.1 58 28.9 150l90.4 70.1c21.5-64.5 81.8-112.4 152.8-112.4z" fill="#ea4335" />
+              </svg>
               Google
             </button>
             <button className="flex-1 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-md">
@@ -302,7 +296,7 @@ const postdata=async()=>{
 
           <p className="text-sm text-center">
             Don&apos;t have an account?{' '}
-            <span  onClick={()=>router.push("/signup")} className="text-[#1d1d4f] font-semibold hover:underline">
+            <span onClick={() => router.push("/signup")} className="text-[#1d1d4f] font-semibold hover:cursor-pointer hover:text-purple-500 ">
               Create Account
             </span>
           </p>

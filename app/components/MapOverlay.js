@@ -26,6 +26,7 @@ export default function MapOverlay({ onAirData }) {
   const [showChart, setShowChart] = useState(false);
   const [showAirChart, setShowAirChart] = useState(false);
   const [airQuality, setAirQuality] = useState(null);
+  const [weather, setWeather] = useState(null);
 
   const mapRef = useRef(null);
   const tileOverlayRef = useRef(null);
@@ -35,6 +36,26 @@ export default function MapOverlay({ onAirData }) {
   const airChartInstance = useRef(null);
 
   const { isLoaded } = useJsApiLoader({ googleMapsApiKey });
+
+  const fetchWeather = async (lat, lon) => {
+    try {
+      const res = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${openWeatherApi}&units=metric`
+      );
+      const data = await res.json();
+      if (data) {
+        setWeather({
+          temperature: data.main.temp,
+          feelsLike: data.main.feels_like,
+          humidity: data.main.humidity,
+          description: data.weather[0].description,
+          icon: data.weather[0].icon
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching weather:', err);
+    }
+  };
 
   const fetchAirQuality = async (lat, lon) => {
     try {
@@ -110,6 +131,11 @@ export default function MapOverlay({ onAirData }) {
       const data = await res.json();
       if (data?.geonames?.length > 0) {
         const pop = data.geonames[0].population;
+        if (pop === 0) {
+          setPopulationHistory([{ year: 'N/A', population: 0 }]);
+          setShowChart(true);
+          return;
+        }
         const simulatedHistory = [
           { year: 2000, population: Math.round(pop * 0.6) },
           { year: 2005, population: Math.round(pop * 0.7) },
@@ -117,6 +143,8 @@ export default function MapOverlay({ onAirData }) {
           { year: 2015, population: Math.round(pop * 0.9) },
           { year: 2020, population: pop },
         ];
+        // console.log(simulatedHistory);
+
         setPopulationHistory(simulatedHistory);
         renderPopulationChart(simulatedHistory);
         setShowChart(true);
@@ -130,7 +158,7 @@ export default function MapOverlay({ onAirData }) {
     try {
       const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
       const data = await res.json();
-
+      // console.log(data);
       if (data?.address?.city) {
         fetchPopulation(data.address.city);
       } else if (data?.address?.town) {
@@ -176,6 +204,7 @@ export default function MapOverlay({ onAirData }) {
     try {
       const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`);
       const data = await res.json();
+      // console.log(data);
       if (data && data.length > 0) {
         const { lat, lon } = data[0];
         const newCenter = { lat: parseFloat(lat), lng: parseFloat(lon) };
@@ -183,7 +212,7 @@ export default function MapOverlay({ onAirData }) {
         fetchAirQuality(lat, lon);
         fetchTomTomTraffic(lat, lon);
         fetchPopulation(query.trim());
-
+        fetchWeather(lat, lon);
         if (mapRef.current && tileOverlayRef.current) {
           mapRef.current.overlayMapTypes.clear();
           mapRef.current.overlayMapTypes.insertAt(0, tileOverlayRef.current);
@@ -220,6 +249,7 @@ export default function MapOverlay({ onAirData }) {
     }
   }, [airQuality]);
   useEffect(() => {
+
     if (populationHistory.length > 0) {
       renderPopulationChart(populationHistory);
     }
@@ -228,7 +258,7 @@ export default function MapOverlay({ onAirData }) {
   return (
   <>
     {/* Search Input */}
-    <div style={{ position: 'absolute', top: 10, right: 20, zIndex: 10 }}>
+    <div style={{ position: 'absolute', top: 10, right: 60, zIndex: 10 }}>
       <input
         type="text"
         placeholder="Search city or place..."
@@ -236,26 +266,38 @@ export default function MapOverlay({ onAirData }) {
         onChange={e => setQuery(e.target.value)}
         style={{ padding: '8px', width: '250px',color: "black" , backgroundColor:"white" , fontSize: '16px' }}
       />
-      <button onClick={handleSearch} style={{ padding: '8px' }}>Go</button>
+      <button className="hover:scale-105 transition cursor-pointer" onClick={handleSearch} style={{ padding: '8px', backgroundColor: 'white', color: 'black' }}>
+        🔍︎
+      </button>
     </div>
 
     {/* Population Chart */}
-{showChart && (
+    {showChart && (
   <div
     style={{
       position: 'absolute',
-      top: 100, // Adjusted to move the chart further down
+      top: 100,
       left: 20,
       zIndex: 9999,
-      background: 'rgba(255, 255, 255, 0.8)', // Transparent background
+      background: 'rgba(255, 255, 255, 0.8)',
       padding: '10px',
       borderRadius: '10px',
       boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+      width: '420px', // To make room for text if needed
+      height: '220px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     }}
   >
-    <canvas ref={popChartRef} width={400} height={200}></canvas>
+    {populationHistory.length === 1 && populationHistory[0].population === 0 ? (
+      <span style={{ color: '#666' }}>No population data available</span>
+    ) : (
+      <canvas ref={popChartRef} width={400} height={200}></canvas>
+    )}
   </div>
 )}
+
 
 {/* Air Quality Chart */}
 {showAirChart && (
@@ -272,6 +314,31 @@ export default function MapOverlay({ onAirData }) {
     }}
   >
     <canvas ref={airChartRef} width={400} height={200}></canvas>
+  </div>
+)}
+{weather && (
+  <div
+    style={{
+      color:'black',
+      position: 'absolute',
+      top: 60,
+      right: 20,
+      zIndex: 9999,
+      background: 'rgba(253, 252, 252, 0.85)',
+      padding: '10px 20px',
+      borderRadius: '10px',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+    }}
+  >
+    <img src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`} alt="weather icon" />
+    <div>
+      <div><strong>{weather.description}</strong></div>
+      <div>🌡 Temp: {weather.temperature}°C (feels like {weather.feelsLike}°C)</div>
+      <div>💧 Humidity: {weather.humidity}%</div>
+    </div>
   </div>
 )}
 
@@ -291,6 +358,7 @@ export default function MapOverlay({ onAirData }) {
           fetchAirQuality(lat, lon);
           fetchTomTomTraffic(lat, lon);
           fetchPopulationFromCoords(lat, lon);
+          fetchWeather(lat, lon);
           if (mapRef.current && tileOverlayRef.current) {
             mapRef.current.overlayMapTypes.clear();
             mapRef.current.overlayMapTypes.insertAt(0, tileOverlayRef.current);

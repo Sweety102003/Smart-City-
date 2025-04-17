@@ -4,13 +4,18 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { flightRouterStateSchema } from "next/dist/server/app-render/types";
+import { jwtDecode } from "jwt-decode";
 
 export default function Home() {
   const containerRef = useRef(null);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
+  
   const rendererRef = useRef(null);
-  const router =useRouter();
+  const router = useRouter();
+
   useEffect(() => {
+    
+    
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -147,21 +152,6 @@ export default function Home() {
 
   return (
     <div className="bg-black text-white min-h-screen font-sans">
-      {/* Navbar */}
-      <header className="flex items-center justify-between px-8 py-4 border-b border-gray-800">
-        <div className="text-xl font-bold text-purple-400">SmartCityOS</div>
-        <nav className="space-x-6 hidden md:block">
-          <a href="#features" className="hover:text-purple-400">Features</a>
-          <a href="#solutions" className="hover:text-purple-400">Solutions</a>
-          <a href="#pricing" className="hover:text-purple-400">Pricing</a>
-          <a href="#about" className="hover:text-purple-400">About</a>
-        </nav>
-        <div className="space-x-4">
-          <button onClick={()=>router.push("/signin")} className="border px-4 py-2 rounded border-gray-600 hover:border-white">Login</button>
-          <button className="bg-purple-500 px-4 py-2 rounded hover:bg-purple-600">Get Started</button>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <section className="text-center py-20 px-8 md:flex md:items-center md:justify-between">
         <div className="max-w-2xl mx-auto md:text-left md:w-1/2">
@@ -171,7 +161,7 @@ export default function Home() {
           <p className="text-gray-400 text-lg mb-6">
             Real-time monitoring, 3D visualization, and smart analytics made for urban management.
           </p>
-          <button className="bg-purple-500 px-6 py-3 rounded text-lg hover:bg-purple-600">Get Started</button>
+          <button className="bg-purple-500 px-6 py-3 rounded text-lg hover:bg-purple-600 cursor-pointer">Get Started</button>
         </div>
         <div className="mt-12 md:mt-0 md:ml-12 w-full md:w-[550px] h-[400px]">
           <div ref={containerRef} className="w-full h-full object-contain" />
@@ -185,12 +175,12 @@ export default function Home() {
           <div className="bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg">
             <h3 className="text-xl font-semibold mb-4">Live City Insights</h3>
             <p className="text-gray-400">Monitor your city's pulse in real-time with our advanced data feeds.</p>
-            <span onClick={()=>router.push("/maps")} className="text-purple-400 mt-4 inline-block hover:underline">Let's Explore</span>
+            <span onClick={()=>router.push("/maps")} className="text-purple-400 mt-4 inline-block hover:cursor-pointer hover:text-lg transition-all duration-200">Explore...</span>
           </div>
           <div className="bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg">
             <h3 className="text-xl font-semibold mb-4">Interactive 3D Visualization</h3>
             <p className="text-gray-400">Explore dynamic cityscapes with detailed, interactive models.</p>
-            <span onClick={()=>router.push("/viewer")} className="text-purple-400 mt-4 inline-block hover:underline">Let's Explore </span>
+            <span onClick={()=>router.push("/viewer")} className="text-purple-400 mt-4 inline-block hover:cursor-pointer hover:text-lg transition-all duration-200">Explore...</span>
           </div>
           
         </div>
