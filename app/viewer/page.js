@@ -6,6 +6,9 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import { showNotification, NotificationTypes } from '../components/Notification';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import ChatInterface from "../components/ChatBotwidget";
 
 export default function ViewerPage() {
   const mountRef = useRef(null);
@@ -27,9 +30,13 @@ export default function ViewerPage() {
     depth: 5,
     radius: 2.5,
     segments: 32,
-    color: '#3080ff'
+    color: '#e580ff'
   });
+  const router = useRouter();
 
+  const handleClick = () => {
+    router.push("/chating");
+  };
   useEffect(() => {
     const currentMount = mountRef.current;
 
@@ -362,7 +369,7 @@ export default function ViewerPage() {
       showNotification('Authentication Required', NotificationTypes.ERROR, 'Please log in to save your model');
       return;
     }
-  
+
     const exporter = new GLTFExporter();
     exporter.parse(
       model.mesh,
@@ -370,7 +377,7 @@ export default function ViewerPage() {
         const blob = new Blob([result], { type: 'model/gltf-binary' });
         const formData = new FormData();
         formData.append('file', blob, `${model.name.replace(/\.[^/.]+$/, "")}_${Date.now()}.glb`);
-  
+
         fetch('/api/upload', {
           method: 'POST',
           headers: {
@@ -391,19 +398,19 @@ export default function ViewerPage() {
       { binary: true }
     );
   };
-  
+
   const handleSaveGrouped = () => {
     const token = localStorage.getItem('token');
     if (!token) {
       showNotification('Authentication Required', NotificationTypes.ERROR, 'Please log in to save your model');
       return;
     }
-  
+
     const group = new THREE.Group();
     modelsRef.current.forEach((model) => {
       group.add(model.mesh.clone());
     });
-  
+
     const exporter = new GLTFExporter();
     exporter.parse(
       group,
@@ -411,7 +418,7 @@ export default function ViewerPage() {
         const blob = new Blob([result], { type: 'model/gltf-binary' });
         const formData = new FormData();
         formData.append('file', blob, `grouped_scene_${Date.now()}.glb`);
-  
+
         fetch('/api/upload-grouped', {
           method: 'POST',
           headers: {
@@ -432,7 +439,7 @@ export default function ViewerPage() {
       { binary: true }
     );
   };
-  
+
 
   const handleParamChange = (e) => {
     const { name, value } = e.target;
@@ -445,7 +452,7 @@ export default function ViewerPage() {
   };
 
   return (
-    <div className="flex h-full w-full relative">
+    <div className="flex h-screen w-screen relative">
 
       {/* Sidebar */}
       <div className={`bg-gray-100 p-4 border-r border-gray-300 h-full ${showSidebar ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden`}>
@@ -454,19 +461,19 @@ export default function ViewerPage() {
           <div className="grid grid-cols-3 gap-2">
             <button
               onClick={() => addPrimitive('box')}
-              className="bg-blue-500 p-2 rounded hover:bg-blue-600 hover:cursor-pointer transition"
+              className="bg-purple-400 p-2 rounded hover:bg-purple-500 hover:cursor-pointer transition"
             >
               Box
             </button>
             <button
               onClick={() => addPrimitive('sphere')}
-              className="bg-blue-500 p-2 rounded hover:bg-blue-600 hover:cursor-pointer transition"
+              className="bg-purple-400 p-2 rounded hover:bg-purple-500 hover:cursor-pointer transition"
             >
               Sphere
             </button>
             <button
               onClick={() => addPrimitive('cylinder')}
-              className="bg-blue-500 p-2 rounded hover:bg-blue-600 hover:cursor-pointer transition"
+              className="bg-purple-400 p-2 rounded hover:bg-purple-500 hover:cursor-pointer transition"
             >
               Cylinder
             </button>
@@ -479,18 +486,18 @@ export default function ViewerPage() {
 
           <div className="space-y-3">
             <div>
-              <label className="bloc0 text-black text-sm mb-1">Color</label>
+              <label className="inline-block w-1/2 text-black text-m mb-1">Color</label>
               <input
                 type="color"
                 name="color"
                 value={primitiveParams.color}
                 onChange={handleParamChange}
-                className="w-full text-black h-8 hover:cursor-pointer"
+                className="w-1/2 text-black h-8 hover:cursor-pointer"
               />
             </div>
 
             <div>
-              <label className="inline-block w-1/2 text-black text-sm mb-1">Width</label>
+              <label className="inline-block w-1/2 text-black text-m mb-1">Width</label>
               <input
                 type="number"
                 name="width"
@@ -504,7 +511,7 @@ export default function ViewerPage() {
             </div>
 
             <div>
-              <label className="inline-block w-1/2 text-black text-sm mb-1">Height</label>
+              <label className="inline-block w-1/2 text-black text-m mb-1">Height</label>
               <input
                 type="number"
                 name="height"
@@ -518,7 +525,7 @@ export default function ViewerPage() {
             </div>
 
             <div>
-              <label className="inline-block w-1/2 text-black text-sm mb-1">Depth</label>
+              <label className="inline-block w-1/2 text-black text-m mb-1">Depth</label>
               <input
                 type="number"
                 name="depth"
@@ -532,7 +539,7 @@ export default function ViewerPage() {
             </div>
 
             <div>
-              <label className="inline-block w-1/2 text-black text-sm mb-1">Radius</label>
+              <label className="inline-block w-1/2 text-black text-m mb-1">Radius</label>
               <input
                 type="number"
                 name="radius"
@@ -562,7 +569,7 @@ export default function ViewerPage() {
             {selectedModel && selectedModel.type !== 'gltf' && (
               <button
                 onClick={updatePrimitiveModel}
-                className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 hover:cursor-pointer transition mt-4"
+                className="w-full bg-green-900 text-white py-2 rounded hover:bg-green-800 hover:cursor-pointer transition mt-4"
               >
                 Update Model
               </button>
@@ -578,13 +585,13 @@ export default function ViewerPage() {
             {modelList.map((model) => (
               <div
                 key={model.id}
-                className={`p-2 border rounded flex justify-between items-center ${selectedModel && selectedModel.id === model.id ? 'bg-blue-100 border-blue-500' : 'bg-white'}`}
+                className={`p-2 border rounded flex justify-between items-center ${selectedModel && selectedModel.id === model.id ? 'bg-purple-100 border-blue-500' : 'bg-white'}`}
                 onClick={() => setSelectedModel(model)}
               >
                 <div className="truncate text-black flex-1">{model.name}</div>
 
                 <button onClick={() => handleSaveIndividual(model)}
-                  className="ml-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 hover:cursor-pointer"
+                  className="ml-2 bg-red-300 text-white px-2 py-1 rounded hover:bg-red-400 hover:cursor-pointer"
                 >
                   Save
                 </button>
@@ -593,7 +600,7 @@ export default function ViewerPage() {
                     e.stopPropagation();
                     removeModel(model.id);
                   }}
-                  className="ml-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 hover:cursor-pointer"
+                  className="ml-2 bg-red-300 text-white px-2 py-1 rounded hover:bg-red-400 hover:cursor-pointer"
                 > X
                 </button>
               </div>
@@ -605,7 +612,7 @@ export default function ViewerPage() {
       {/* Toggle Sidebar Button */}
       {/* <button
         onClick={() => setShowSidebar(!showSidebar)}
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-r z-10 hover:bg-blue-600 hover:cursor-pointer"
+        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-purple-400 text-white p-2 rounded-r z-10 hover:bg-purple-500 hover:cursor-pointer"
       >
         {showSidebar ? '←' : '→'}
       </button> */}
@@ -624,12 +631,15 @@ export default function ViewerPage() {
 
         <button
           onClick={() => handleSaveGrouped()}
-          className="absolute top-4 right-4 z-10 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 hover:cursor-pointer"
+          className="absolute top-4 right-4 z-10 bg-purple-400 text-white px-4 py-2 rounded hover:bg-purple-500 hover:cursor-pointer"
         >
           Save Grouped Models
         </button>
 
       </div>
+      
+        <ChatInterface />
+      
     </div>
   );
 }

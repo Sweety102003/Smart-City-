@@ -50,7 +50,7 @@ export default function UserSearch() {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 w-[350px]">
       <div className="mb-6">
         <input
           type="text"
@@ -76,7 +76,7 @@ export default function UserSearch() {
               onClick={() => accessChat(user._id)}
             >
               <p><strong>Name:</strong> {user.name}</p>
-              <p><strong>Email:</strong> {user.email}</p>
+              <p><stronag>Email:</stronag> {user.email}</p>
             </li>
           ))}
         </ul>
