@@ -4,6 +4,7 @@ import { Facebook, Mail, User, Lock } from "lucide-react"
 import { useState } from "react"
 import axios from "axios"
 import { useRouter } from 'next/navigation';
+import { toast } from "react-toastify";
 
 export default function Signup() {
   const router = useRouter();
@@ -25,11 +26,11 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
       });
 
-      alert(response.data.message || "Signup successful!");
+      toast.success(response.data.message || "Signup successful!");
       router.push("/signin"); // ✅ Redirect to sign-in page
     } catch (error) {
       console.error(error);
-      alert("Signup failed!");
+      toast.error("Signup failed!");
     }
   }
 
@@ -48,7 +49,7 @@ export default function Signup() {
       <div className="w-full md:w-1/2 flex justify-center items-center p-4 md:p-10">
         <div className="max-w-md w-full">
           <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center">Create Account</h2>
-          <p className="text-sm text-center mb-4 text-gray-600">Join our smart city platform</p>
+          <p className="text-sm text-center mb-4 text-gray-600">Join our Smart City platform</p>
 
           <button className="w-full bg-white border text-gray-700 border-gray-300 rounded px-4 py-2 mb-3 flex items-center justify-center hover:bg-gray-50">
             {/* Google Icon */}
@@ -66,7 +67,7 @@ export default function Signup() {
             Sign up with Facebook
           </button>
 
-          <div className="text-center text-gray-500 text-sm mb-4">Or continue with email</div>
+          <div className="text-center text-gray-500 text-sm mb-4">Or continue with Email</div>
 
           <form className="space-y-4" onSubmit={postdata}>
             <div className="relative">
@@ -131,14 +132,14 @@ export default function Signup() {
               </div>
             </div>
 
-            <button type="submit" className="w-full bg-blue-900 text-white rounded px-4 py-2 hover:bg-blue-800">
+            <button type="submit" className="w-full bg-blue-900 text-white rounded px-4 py-2 hover:bg-blue-800 hover:cursor-pointer hover:bg-purple-500">
               Create Account
             </button>
           </form>
 
           <p className="text-sm text-center mt-4">
             Already have an account?{" "}
-            <span onClick={()=>router.push("/signin")} className="text-blue-600 underline">
+            <span onClick={()=>router.push("/signin")} className="text-blue-600 underline hover:cursor-pointer hover:text-purple-500">
               Sign In
             </span>
           </p>

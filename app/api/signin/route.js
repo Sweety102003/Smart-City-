@@ -27,7 +27,7 @@ console.log(body);
       return NextResponse.json({ message: "Incorrect password" }, { status: 401 });
     }
 
-    const token = jwt.sign({ userId: user._id }, jwt_secret, { expiresIn: "1d" });
+    const token = jwt.sign({ userId: user.name }, jwt_secret, { expiresIn: "1d" });
 
     return NextResponse.json({ message: "Login successful", token, user }, { status: 200 });
   } catch (error) {
