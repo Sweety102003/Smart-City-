@@ -95,7 +95,7 @@ export default function ViewerPage() {
       camera.updateProjectionMatrix();
     };
     window.addEventListener('resize', handleResize);
-
+    handleResize();
     return () => {
       cancelAnimationFrame(animationIdRef.current);
       window.removeEventListener('resize', handleResize);
@@ -455,7 +455,7 @@ export default function ViewerPage() {
     <div className="flex h-screen w-screen relative">
 
       {/* Sidebar */}
-      <div className={`bg-gray-100 p-4 border-r border-gray-300 h-full ${showSidebar ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden`}>
+      <div className={`bg-gray-300 p-4 border-r border-gray-300 h-full ${showSidebar ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden`}>
         <div className="mb-6">
           <h2 className="text-lg text-black font-semibold mb-3">Add Primitives</h2>
           <div className="grid grid-cols-3 gap-2">
@@ -479,7 +479,7 @@ export default function ViewerPage() {
             </button>
           </div>
         </div>
-
+        <div className="bg-gray-300 max-h-[450px] overflow-y-auto space-y-2 p-0 overflow-hidden">
         {/* Parameters Control */}
         <div className="mb-6">
           <h2 className="text-lg text-black font-semibold mb-3">Parameters</h2>
@@ -608,7 +608,7 @@ export default function ViewerPage() {
           </div>
         </div>
       </div>
-
+      </div>
       {/* Toggle Sidebar Button */}
       {/* <button
         onClick={() => setShowSidebar(!showSidebar)}

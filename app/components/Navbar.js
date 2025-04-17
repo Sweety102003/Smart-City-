@@ -48,7 +48,7 @@ export default function Navbar() {
       <div className="space-x-4">
         {isLoggedIn ? (
           <>
-            <span className="text-gray-400">Hi, {username}</span>
+            {/* <span className="text-gray-400">Hi, {username}</span> */}
             <button
               onClick={handleLogout}
               className="border px-4 py-2 rounded border-gray-600 hover:border-white cursor-pointer"
