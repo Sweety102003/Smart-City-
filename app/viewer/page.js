@@ -616,7 +616,7 @@ export default function ViewerPage() {
       >
         {showSidebar ? '←' : '→'}
       </button> */}
-
+{/* {showsidebar&& <></>} */}
       {/* Main Content */}
       <div className="flex-1 relative">
         <div ref={mountRef} className="w-full h-full" />
